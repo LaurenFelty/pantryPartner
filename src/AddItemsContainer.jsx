@@ -48,7 +48,7 @@ const AddItemsContainer = () => {
     console.log('Form submitted:', form);
 
     try {
-      const response = await fetch('/newItem', {
+      const response = await fetch('http://localhost:8080/newItem', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

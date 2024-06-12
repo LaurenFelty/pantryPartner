@@ -2,15 +2,15 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const inventoryController = require('./controllers/inventoryController');
-
+const itemController = require('./controllers/itemController');
+const cors = require('cors');
 const app = express();
 const PORT = 8080;
 
 const mongoURI =
   process.env.NODE_ENV === 'test'
-    ? 'mongodb://localhost/unit11test'
-    : 'mongodb://localhost/unit11dev';
+    ? 'mongodb://localhost/pantrypartnertest'
+    : 'mongodb://localhost/pantrypartnerdev';
 
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -19,6 +19,13 @@ mongoose
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Enable CORS
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+  })
+);
 
 // Serve static files from the public directory
 app.use('/', express.static(path.resolve(__dirname, '../public')));
@@ -29,7 +36,7 @@ app.get('/', (req, res) => {
 });
 
 // Endpoint to handle new item creation or updating inventory
-app.post('/newItem', inventoryController.changeInventory, (req, res) => {
+app.post('/newItem', itemController.changeInventory, (req, res) => {
   res.status(200).json(res.locals.item);
 });
 
@@ -44,9 +51,18 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: err.message });
 });
 
+// Define a route to proxy requests to the back end
+// app.use(
+//   '/api',
+//   createProxyMiddleware({
+//     target: 'http://localhost:8080', // Your back end server address
+//     changeOrigin: true,
+//   })
+// );
+
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}...`);
+  console.log(`Proxy is running on port ${PORT}...`);
 });
 
 module.exports = app;
