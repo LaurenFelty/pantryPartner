@@ -1,52 +1,108 @@
-const path = require('path');
 const express = require('express');
+const path = require('path');
+const mongoose = require('mongoose');
 
-const app = express();
-
-const apiRouter = require('./routes/api');
+const userController = require('./controllers/userController');
+const sessionController = require('./controllers/sessionController');
+const { error } = require('console');
 
 const PORT = 8080;
 
+const app = express();
+
+const mongoURI =
+  process.env.NODE_ENV === 'test'
+    ? 'mongodb://localhost/unit11test'
+    : 'mongodb://localhost/unit11dev';
+mongoose.connect(mongoURI);
+
 /**
- * handle parsing request body
+ * Automatically parse urlencoded body content and form data from incoming requests and place it
+ * in req.body
  */
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded());
+
+app.use('/client', express.static(path.resolve(__dirname, '../client')));
 
 /**
- * handle requests for static files
+ * --- Express Routes ---
+ * Express will attempt to match these routes in the order they are declared here.
+ * If a route handler / middleware handles a request and sends a response without
+ * calling `next()`, then none of the route handlers after that route will run!
+ * This can be very useful for adding authorization to certain routes...
  */
-app.use(express.static(path.resolve(__dirname, '../client')));
 
 /**
- * define route handlers
+ * root
  */
-app.use('/api', apiRouter);
-
-// catch-all route handler for any requests to an unknown route
-app.use((req, res) => res.status(404).send('This is not the page you\'re looking for...'));
-
-/**
- * express error handler
- * @see https://expressjs.com/en/guide/error-handling.html#writing-error-handlers
- */
-
-app.use((err, req, res, next) => {
-  const defaultErr = {
-    log: 'Express error handler caught unknown middleware error',
-    status: 500,
-    message: { err: 'An error occurred' },
-  };
-  const errorObj = Object.assign({}, defaultErr, err);
-  console.log(errorObj.log);
-  return res.status(errorObj.status).json(errorObj.message);
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/index.html'));
 });
 
 /**
- * start server
+ * signup
  */
+app.get('/signup', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/signup.html'));
+});
+
+app.post(
+  '/signup',
+  userController.createUser,
+
+  sessionController.startSession,
+  sessionController.isLoggedIn,
+  (req, res) => {
+    // what should happen here on successful sign up?
+    res.redirect('/secret');
+  }
+);
+
+/**
+ * login
+ */
+app.post(
+  '/login',
+  userController.verifyUser,
+  sessionController.startSession,
+  sessionController.isLoggedIn,
+  (req, res) => {
+    if (!res.locals.ssid || res.locals.time === undefined)
+      return res.redirect('/signup');
+    return res.redirect('/secret');
+  }
+);
+
+/**
+ * Authorized routes
+ */
+app.get('/secret', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/secret.html'));
+  // if(!res.locals.time) return res.redirect('/login');
+});
+
+app.get('/secret/users', userController.getAllUsers, (req, res) => {
+  res.send({ users: res.locals.users });
+});
+
+/**
+ * 404 handler
+ */
+app.use('*', (req, res) => {
+  res.status(404).send('Not Found');
+});
+
+/**
+ * Global error handler
+ */
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(500).send({ error: err });
+});
+
 app.listen(PORT, () => {
-  console.log(`Server listening on port: ${PORT}...`);
+  console.log(`Listening on port ${PORT}...`);
 });
 
 module.exports = app;
