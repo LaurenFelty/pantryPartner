@@ -1,37 +1,52 @@
-const Item = require('../models/itemModel');
+const ItemType = require('../models/itemTypeModel');
 
 const inventoryController = {};
 
-inventoryController.changeInventory = async (req, res, next) => {
+nventoryController.changeInventory = async (req, res, next) => {
   try {
-    //deconstruct the parameters being sent from the front end
+    // Destructure the parameters being sent from the front end
     const { actionType, item, itemType, qty } = req.body;
 
-    // check to make sure that all the required fields have been entered
+    // Check if all required fields are present
     if (!actionType || !item || !itemType || !qty) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Apply functionality to the item
-    const update = { item };
-    if (actionType === 'add') {
-      //add to the qty
-      update.$inc = { qty: parseInt(qty) };
-    } else if (actionType === 'delete') {
-      //delete the passed qty
-      update.$inc = { qty: -parseInt(qty) };
-    } else {
-      return res.status(400).json({ error: 'Invalid action type' });
+    // Check if itemType exists, create if not
+    let itemTypeRecord = await ItemType.findOne({ itemType: itemType });
+    if (!itemTypeRecord) {
+      itemTypeRecord = new ItemType({ itemType: itemType, items: [] });
     }
 
-    // Find and update the item in the database
-    const updatedItem = await Item.findOneAndUpdate(
-      { item: item }, // Search for the item by its name
-      update,
-      { new: true, upsert: true } // Return the updated document and create if not exists
-    );
+    // Find the item in the items array
+    let itemIndex = itemTypeRecord.items.findIndex((i) => i.item === item);
 
-    res.locals.item = updatedItem;
+    // Update or create item in the items array based on actionType
+    if (itemIndex !== -1) {
+      // Item exists, update qty based on actionType
+      if (actionType === 'add') {
+        itemTypeRecord.items[itemIndex].qty += parseInt(qty);
+      } else if (actionType === 'delete') {
+        itemTypeRecord.items[itemIndex].qty -= parseInt(qty);
+        if (itemTypeRecord.items[itemIndex].qty < 0) {
+          itemTypeRecord.items[itemIndex].qty = 0; // Ensure qty doesn't go negative
+        }
+      } else {
+        return res.status(400).json({ error: 'Invalid action type' });
+      }
+    } else {
+      // Item does not exist, add new item
+      if (actionType === 'add') {
+        itemTypeRecord.items.push({ item: item, qty: parseInt(qty) });
+      } else {
+        return res.status(400).json({ error: 'Item not found for deletion' });
+      }
+    }
+
+    // Save the updated itemType record
+    await itemTypeRecord.save();
+
+    res.locals.item = itemTypeRecord; // Return the updated itemType record
     return next();
   } catch (error) {
     console.error('Error updating inventory:', error);
@@ -48,18 +63,18 @@ inventoryController.getInventory = async (req, res, next) => {
       return res.status(400).json({ error: 'Item Type parameter is required' });
     }
 
-    // Query the database for all items of the specified type
-    const items = await Item.find({ itemType: itemType });
+    // Query the database for the itemType
+    const itemTypeRecord = await ItemType.findOne({ itemType: itemType });
 
-    // If no items found, return a 404 status
-    if (items.length === 0) {
+    // If itemType not found, return a 404 status
+    if (!itemTypeRecord) {
       return res
         .status(404)
         .json({ error: 'No items found for the specified type' });
     }
 
     // Attach the items to res.locals and proceed to the next middleware
-    res.locals.items = items;
+    res.locals.items = itemTypeRecord.items;
 
     return next();
   } catch (error) {

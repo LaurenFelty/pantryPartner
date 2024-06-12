@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import './styles/AddItemsContainer.scss';
 
 // Define a form input to reuse
-const FormInput = ({ label, id, name, type, value, onChange }) => (
+const FormInput = ({ label, id, name, type, value, onChange, placeholder }) => (
   <div className='entryElement'>
     <label htmlFor={id}>{label}:</label>
-    <input type={type} id={id} name={name} value={value} onChange={onChange} />
+    <input
+      type={type}
+      id={id}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+    />
   </div>
 );
 
@@ -59,15 +66,14 @@ const AddItemsContainer = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Success:', data);
-        
-        // Handle success 
+
+        // Handle success
         setForm({
           item: '',
           actionType: '',
           itemType: '',
           qty: '',
         });
-        
       } else {
         console.error('Error:', response.statusText);
         // Handle error (e.g., show error message)
@@ -124,6 +130,7 @@ const AddItemsContainer = () => {
           type='text'
           value={form.item}
           onChange={handleChange}
+          placeholder='Enter items:'
         />
         <FormInput
           label='Quantity'
@@ -132,6 +139,7 @@ const AddItemsContainer = () => {
           type='number'
           value={form.qty}
           onChange={handleChange}
+          placeholder='Enter quantity:'
         />
         <div id='buttonContainer'>
           <button id='submitButton' type='submit'>

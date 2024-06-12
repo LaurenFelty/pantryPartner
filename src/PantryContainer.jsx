@@ -17,7 +17,7 @@ const itemTypes = [
 
 const PantryContainer = () => {
   const [selectedType, setSelectedType] = useState(null);
-  const [itemData, setItemData] = useState(null); // State to store fetched data
+  const [itemData, setItemData] = useState(null);
 
   const handleClick = async (itemType) => {
     setSelectedType(itemType.label); // Set selectedType to the label
@@ -72,8 +72,7 @@ const PantryContainer = () => {
                 {/* Render fetched data here */}
                 {itemData.map((data, index) => (
                   <div key={index}>
-                    <p>Type: {data.itemType}</p>
-                    <p>Item: {data.item}</p>
+                    <p>Item: {data.items}</p>
                     <p>Quantity: {data.qty}</p>
                   </div>
                 ))}

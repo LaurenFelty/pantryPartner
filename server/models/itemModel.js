@@ -6,9 +6,11 @@ const itemTypeSchema = new Schema({
   items: [
     {
       item: { type: String, required: true },
-      qty: { type: Number, required: true },
+      qty: { type: Number, required: true, default: 0 },
     },
   ],
 });
 
-module.exports = mongoose.model('ItemType', itemTypeSchema);
+const ItemType = mongoose.model('ItemType', itemTypeSchema);
+
+module.exports = ItemType;
