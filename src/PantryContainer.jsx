@@ -1,33 +1,34 @@
 import React, { useState } from 'react';
 import './styles/PantryContainer.scss';
 
-const groceryItems = [
-  'Dariy & Eggs',
-  'Meats & Seafood',
-  'Produce',
-  'Frozen Items',
-  'Bread & Baked Items',
-  'Beverages',
-  'Spices',
-  'Cat Treats',
-  'Snacks',
-  'Others',
+const itemTypes = [
+  { value: 'recipe', label: 'Recipe' },
+  { value: 'dairyAndEggs', label: 'Dairy & Eggs' },
+  { value: 'produce', label: 'Produce' },
+  { value: 'bread', label: 'Bread & Baked Items' },
+  { value: 'spices', label: 'Spices' },
+  { value: 'snacks', label: 'Snacks' },
+  { value: 'meat', label: 'Meat & Seafood' },
+  { value: 'frozen', label: 'Frozen' },
+  { value: 'beverages', label: 'Beverages' },
+  { value: 'catTreats', label: 'Cat Treats' },
+  { value: 'others', label: 'Others' },
 ];
 
 const PantryContainer = () => {
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedType, setSelectedType] = useState(null);
   const [itemData, setItemData] = useState(null); // State to store fetched data
 
-  const handleClick = async (item, event) => {
-    setSelectedItem(item);
+  const handleClick = async (itemType) => {
+    setSelectedType(itemType.label); // Set selectedType to the label
     try {
-      const response = await fetch(`/api/item/${item}`); // Adjust the API endpoint
+      const response = await fetch(
+        `http://localhost:8080/getInventory?itemType=${itemType.value}`
+      );
       if (response.ok) {
         const data = await response.json();
+        console.log('Data', data);
         setItemData(data);
-
-        // Calculate position of the popup relative to the click event
-        setPopupPosition({ x: event.clientX, y: event.clientY });
       } else {
         console.error('Failed to fetch item data');
       }
@@ -37,7 +38,7 @@ const PantryContainer = () => {
   };
 
   const handleClose = () => {
-    setSelectedItem(null);
+    setSelectedType(null);
     setItemData(null);
   };
 
@@ -47,29 +48,35 @@ const PantryContainer = () => {
         <h3>Your Inventory</h3>
       </div>
       <div id='groceryContainer'>
-        {groceryItems.map((item, index) => (
+        {itemTypes.map((itemType, index) => (
           <div
             key={index}
             className='groceryItem'
-            onClick={(event) => handleClick(item, event)}
+            onClick={() => handleClick(itemType)}
           >
-            {item}
+            {itemType.label}
           </div>
         ))}
       </div>
 
       {/* Conditionally render the popup */}
-      {selectedItem && (
+      {selectedType && (
         <div className='popupContainer'>
           <div className='popup-content'>
             <span className='close' onClick={handleClose}>
-              X
+              Exit
             </span>
-            <h2>{selectedItem}</h2>
-            {itemData && (
+            <h2>{selectedType}</h2>
+            {itemData && Array.isArray(itemData) && (
               <div>
                 {/* Render fetched data here */}
-                {/* Example: <p>{itemData.description}</p> */}
+                {itemData.map((data, index) => (
+                  <div key={index}>
+                    <p>Type: {data.itemType}</p>
+                    <p>Item: {data.item}</p>
+                    <p>Quantity: {data.qty}</p>
+                  </div>
+                ))}
               </div>
             )}
           </div>

@@ -1,8 +1,7 @@
-// server.js
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const itemController = require('./controllers/itemController');
+const inventoryController = require('./controllers/inventoryController'); // Ensure this path is correct
 const cors = require('cors');
 const app = express();
 const PORT = 8080;
@@ -36,8 +35,13 @@ app.get('/', (req, res) => {
 });
 
 // Endpoint to handle new item creation or updating inventory
-app.post('/newItem', itemController.changeInventory, (req, res) => {
+app.post('/newItem', inventoryController.changeInventory, (req, res) => {
   res.status(200).json(res.locals.item);
+});
+
+// handle get request gor inventory
+app.get('/getInventory', inventoryController.getInventory, (req, res) => {
+  res.status(200).json(res.locals.items);
 });
 
 // 404 handler for undefined routes
@@ -51,18 +55,9 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: err.message });
 });
 
-// Define a route to proxy requests to the back end
-// app.use(
-//   '/api',
-//   createProxyMiddleware({
-//     target: 'http://localhost:8080', // Your back end server address
-//     changeOrigin: true,
-//   })
-// );
-
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Proxy is running on port ${PORT}...`);
+  console.log(`Server is running on port ${PORT}...`);
 });
 
 module.exports = app;

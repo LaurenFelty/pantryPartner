@@ -59,13 +59,15 @@ const AddItemsContainer = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Success:', data);
-        // Handle success (e.g., update state, show notification)
+        
+        // Handle success 
         setForm({
           item: '',
           actionType: '',
           itemType: '',
           qty: '',
         });
+        
       } else {
         console.error('Error:', response.statusText);
         // Handle error (e.g., show error message)
