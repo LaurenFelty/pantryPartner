@@ -1,71 +1,52 @@
+// server.js
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const userController = require('./controllers/userController');
-const sessionController = require('./controllers/sessionController');
-const { error } = require('console');
-
-const PORT = 8080;
+const inventoryController = require('./controllers/inventoryController');
 
 const app = express();
+const PORT = 8080;
 
 const mongoURI =
   process.env.NODE_ENV === 'test'
     ? 'mongodb://localhost/unit11test'
     : 'mongodb://localhost/unit11dev';
-mongoose.connect(mongoURI);
 
-/**
- * Automatically parse urlencoded body content and form data from incoming requests and place it
- * in req.body
- */
+mongoose
+  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('Failed to connect to MongoDB', err));
+
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/client', express.static(path.resolve(__dirname, '../client')));
+// Serve static files from the public directory
+app.use('/', express.static(path.resolve(__dirname, '../public')));
 
-/**
- * root
- */
+// Serve the main HTML file for the root path
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/index.html'));
+  res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
 
-/**
- * signup
- */
-app.get('/signup', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/signup.html'));
+// Endpoint to handle new item creation or updating inventory
+app.post('/newItem', inventoryController.changeInventory, (req, res) => {
+  res.status(200).json(res.locals.item);
 });
 
-app.post(
-  '/signup',
-  userController.createUser,
-  sessionController.startSession,
-  sessionController.isLoggedIn,
-  (req, res) => {
-    // what should happen here on successful sign up?
-    res.redirect('/secret');
-  }
-);
-
-/**
- * 404 handler
- */
+// 404 handler for undefined routes
 app.use('*', (req, res) => {
   res.status(404).send('Not Found');
 });
 
-/**
- * Global error handler
- */
+// Global error handler
 app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ error: err });
+  console.error(err);
+  res.status(500).send({ error: err.message });
 });
 
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}...`);
+  console.log(`Server is running on port ${PORT}...`);
 });
 
 module.exports = app;

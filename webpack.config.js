@@ -64,7 +64,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:3000',
         pathRewrite: { '^/api': '' }, // optional, if your API endpoints don't have a prefix
         secure: false, // optional, only necessary if your backend server is using HTTPS with self-signed certificate
         changeOrigin: true, // optional, changes the origin of the host header to the target URL

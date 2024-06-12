@@ -48,7 +48,7 @@ const AddItemsContainer = () => {
     console.log('Form submitted:', form);
 
     try {
-      const response = await fetch('https://yourserver.com/api/endpoint', {
+      const response = await fetch('/newItem', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
