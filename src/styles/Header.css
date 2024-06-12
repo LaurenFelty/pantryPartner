@@ -1,0 +1,20 @@
+#headerStyle {
+  font-family: 'Rye', serif;
+  background-color: #b4703f;
+  height: 130px;
+  width: 80vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 50px;
+  border-radius: 30px;
+  border-style: double;
+  border-width: 10px;
+  margin: 10px;
+}
+
+#titleBlock {
+  margin-left: auto; /* Centers this item */
+  white-space: nowrap;
+}

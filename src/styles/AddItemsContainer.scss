@@ -1,0 +1,99 @@
+#addItemsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid;
+  width: 40vw;
+  height: auto;
+  margin-top: 20px;
+  margin-bottom: 50px;
+  border-radius: 30px;
+  background-color: #b79a7b;
+  border-style: double;
+  border-width: 10px;
+
+  h1 {
+    font-size: 2em;
+  }
+}
+
+#changeForm {
+  font-size: 1.5em;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+
+  select {
+    font-family: 'Rye', serif;
+    width: auto;
+    padding: 10px;
+    font-size: 16px;
+    color: #555;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-position: right 10px top 50%;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin: 0px;
+
+    &:hover {
+      border-color: #60b4b7;
+      box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+      outline: none;
+    }
+
+    option {
+      font-family: 'Rye', serif;
+    }
+  }
+
+  input {
+    font-family: 'Rye', serif;
+    width: auto;
+    font-size: 16px;
+    color: #555;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-position: right 10px top 50%;
+    cursor: text;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin: 5px;
+
+    &:hover {
+      border-color: #60b4b7;
+      box-shadow: 0 0 8px rgba(75, 87, 97, 0.6);
+      outline: none;
+    }
+  }
+  #buttonContainer {
+    #submitButton {
+      font-family: 'Rye', serif;
+      border-radius: 20px;
+      background-color: #60b4b7;
+      padding: 10px;
+      font-size: 1.25em;
+      align-content: end;
+      margin-bottom: 10px;
+      border-color: black;
+      box-shadow: 0 0 8px rgba(75, 87, 97, 0.6);
+
+      &:hover {
+        background: #b4703f;
+        border-radius: 25px;
+        color: #f9f9f9;
+        box-shadow: 0 0 8px rgba(75, 87, 97, 0.6);
+        border-radius: 50px;
+      }
+    }
+  }
+}
+
+.entryElement {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px;
+  margin-left: 25px;
+}
