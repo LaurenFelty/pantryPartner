@@ -1,7 +1,6 @@
 import React from 'react';
-import ProfileContainer from './ProfileContainer';
+import ProfileContainer from './ProfileContainer.jsx';
 import './styles/Header.css';
-import SortByContainer from './SortByContainer';
 
 function Header() {
   return (

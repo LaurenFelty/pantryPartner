@@ -1,5 +1,5 @@
 import React from 'react';
-import PantryContainer from './PantryContainer';
+import PantryContainer from './PantryContainer.jsx';
 import './styles/leftContainer.css';
 
 function LeftContainer() {

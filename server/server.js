@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-
 const userController = require('./controllers/userController');
 const sessionController = require('./controllers/sessionController');
 const { error } = require('console');
@@ -26,14 +25,6 @@ app.use(express.urlencoded());
 app.use('/client', express.static(path.resolve(__dirname, '../client')));
 
 /**
- * --- Express Routes ---
- * Express will attempt to match these routes in the order they are declared here.
- * If a route handler / middleware handles a request and sends a response without
- * calling `next()`, then none of the route handlers after that route will run!
- * This can be very useful for adding authorization to certain routes...
- */
-
-/**
  * root
  */
 app.get('/', (req, res) => {
@@ -50,7 +41,6 @@ app.get('/signup', (req, res) => {
 app.post(
   '/signup',
   userController.createUser,
-
   sessionController.startSession,
   sessionController.isLoggedIn,
   (req, res) => {
@@ -58,33 +48,6 @@ app.post(
     res.redirect('/secret');
   }
 );
-
-/**
- * login
- */
-app.post(
-  '/login',
-  userController.verifyUser,
-  sessionController.startSession,
-  sessionController.isLoggedIn,
-  (req, res) => {
-    if (!res.locals.ssid || res.locals.time === undefined)
-      return res.redirect('/signup');
-    return res.redirect('/secret');
-  }
-);
-
-/**
- * Authorized routes
- */
-app.get('/secret', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/secret.html'));
-  // if(!res.locals.time) return res.redirect('/login');
-});
-
-app.get('/secret/users', userController.getAllUsers, (req, res) => {
-  res.send({ users: res.locals.users });
-});
 
 /**
  * 404 handler

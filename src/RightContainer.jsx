@@ -1,6 +1,6 @@
 import React from 'react';
-import SortByContainer from './SortByContainer';
-import AddItemsContainer from './AddItemsContainer';
+import SortByContainer from './SortByContainer.jsx';
+import AddItemsContainer from './AddItemsContainer.jsx';
 import './styles/rightContainer.scss';
 
 function RightContainer() {
