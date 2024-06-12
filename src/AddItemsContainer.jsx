@@ -1,8 +1,33 @@
 import React, { useState } from 'react';
 import './styles/AddItemsContainer.scss';
 
-function AddItemsContainer() {
-  // State to hold form input values
+// Define a form input to reuse
+const FormInput = ({ label, id, name, type, value, onChange }) => (
+  <div className='entryElement'>
+    <label htmlFor={id}>{label}:</label>
+    <input type={type} id={id} name={name} value={value} onChange={onChange} />
+  </div>
+);
+
+// Define a select form layout
+const FormSelect = ({ label, id, name, value, onChange, options }) => (
+  <div className='entryElement'>
+    <label htmlFor={id}>{label}:</label>
+    <select id={id} name={name} value={value} onChange={onChange}>
+      <option value='' disabled>
+        Select {label.toLowerCase()}
+      </option>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+const AddItemsContainer = () => {
+  // Handle state change
   const [form, setForm] = useState({
     item: '',
     actionType: '',
@@ -10,96 +35,102 @@ function AddItemsContainer() {
     qty: '',
   });
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({
-      ...form,
+    setForm((prevForm) => ({
+      ...prevForm,
       [name]: value,
-    });
+    }));
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form submitted:', form);
 
-    if (form.actionType === 'add') {
-      console.log('Adding item:', form);
-      // Add item logic here
-    } else if (form.actionType === 'delete') {
-      console.log('Deleting item:', form);
-      // Delete item logic here
+    try {
+      const response = await fetch('https://yourserver.com/api/endpoint', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Success:', data);
+        // Handle success (e.g., update state, show notification)
+        setForm({
+          item: '',
+          actionType: '',
+          itemType: '',
+          qty: '',
+        });
+      } else {
+        console.error('Error:', response.statusText);
+        // Handle error (e.g., show error message)
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle network error (e.g., show error message)
     }
   };
 
+  const actionOptions = [
+    { value: 'add', label: 'Add' },
+    { value: 'delete', label: 'Delete' },
+  ];
+
+  const itemTypeOptions = [
+    { value: 'recipe', label: 'Recipe' },
+    { value: 'dairyAndEggs', label: 'Dairy & Eggs' },
+    { value: 'produce', label: 'Produce' },
+    { value: 'bread', label: 'Bread & Baked Items' },
+    { value: 'spices', label: 'Spices' },
+    { value: 'snacks', label: 'Snacks' },
+    { value: 'meat', label: 'Meat & Seafood' },
+    { value: 'frozen', label: 'Frozen' },
+    { value: 'beverages', label: 'Beverages' },
+    { value: 'catTreats', label: 'Cat Treats' },
+    { value: 'others', label: 'Others' },
+  ];
+
   return (
     <div id='addItemsContainer'>
-      <h1>Change Your Inventory: </h1>
-
+      <h1>Change Your Inventory:</h1>
       <form id='changeForm' onSubmit={handleSubmit}>
-        <div className='entryElement'>
-          <label htmlFor='actionType'>Action:</label>
-          <select
-            id='actionType'
-            name='actionType'
-            value={form.actionType}
-            onChange={handleChange}
-          >
-            <option value='' disabled>
-              Select an action
-            </option>
-            <option value='add'>Add</option>
-            <option value='delete'>Delete</option>
-          </select>
-        </div>
-
-        <div className='entryElement'>
-          <label htmlFor='type'>Type:</label>
-          <select
-            id='itemType'
-            name='itemType'
-            value={form.itemType}
-            onChange={handleChange}
-          >
-            <option value='' disabled>
-              Select a type
-            </option>
-            <option value='recipe'>Recipe</option>
-            <option value='dairyAndEggs'>Dairy & Eggs</option>
-            <option value='produce'>Produce</option>
-            <option value='bread'>Bread & Baked Items</option>
-            <option value='spices'>Spices</option>
-            <option value='snacks'>Snacks</option>
-            <option value='meat'>Meat & Seafood</option>
-            <option value='frozen'>Frozen</option>
-            <option value='beverages'>Beverages</option>
-            <option value='catTreats'>Cat Treats</option>
-            <option value='others'>Others</option>
-          </select>
-        </div>
-
-        <div className='entryElement'>
-          <label htmlFor='item'>Item:</label>
-          <input
-            type='text'
-            id='item'
-            name='item'
-            value={form.item}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className='entryElement'>
-          <label htmlFor='qty'>Quantity:</label>
-          <input
-            type='number'
-            id='qty'
-            name='qty'
-            value={form.qty}
-            onChange={handleChange}
-          />
-        </div>
+        <FormSelect
+          label='Action'
+          id='actionType'
+          name='actionType'
+          value={form.actionType}
+          onChange={handleChange}
+          options={actionOptions}
+        />
+        <FormSelect
+          label='Type'
+          id='itemType'
+          name='itemType'
+          value={form.itemType}
+          onChange={handleChange}
+          options={itemTypeOptions}
+        />
+        <FormInput
+          label='Item'
+          id='item'
+          name='item'
+          type='text'
+          value={form.item}
+          onChange={handleChange}
+        />
+        <FormInput
+          label='Quantity'
+          id='qty'
+          name='qty'
+          type='number'
+          value={form.qty}
+          onChange={handleChange}
+        />
         <div id='buttonContainer'>
           <button id='submitButton' type='submit'>
             Submit
@@ -108,6 +139,6 @@ function AddItemsContainer() {
       </form>
     </div>
   );
-}
+};
 
 export default AddItemsContainer;
