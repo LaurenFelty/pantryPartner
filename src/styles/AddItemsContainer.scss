@@ -58,7 +58,7 @@
     border-radius: 4px;
     background-position: right 10px top 50%;
     cursor: text;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    // transition: border-color 0.3s, box-shadow 0.3s;
     margin: 5px;
 
     &:hover {
@@ -76,14 +76,14 @@
       font-size: 1.25em;
       align-content: end;
       margin-bottom: 10px;
-      border-color: black;
-      box-shadow: 0 0 8px rgba(75, 87, 97, 0.6);
+      border-color: rgb(0, 0, 0);
+      // box-shadow: 0 0 8px rgba(75, 87, 97, 0.6);
 
       &:hover {
         background: #b4703f;
         border-radius: 25px;
         color: #f9f9f9;
-        box-shadow: 0 0 8px rgba(75, 87, 97, 0.6);
+        // box-shadow: 0 0 8px rgba(75, 87, 97, 0.6);
         border-radius: 50px;
       }
     }
