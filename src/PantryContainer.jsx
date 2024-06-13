@@ -67,12 +67,12 @@ const PantryContainer = () => {
               Exit
             </span>
             <h2>{selectedType}</h2>
-            {itemData && Array.isArray(itemData) && (
+            {itemData && Array.isArray(itemData.items) && (
               <div>
                 {/* Render fetched data here */}
-                {itemData.map((data, index) => (
+                {itemData.items.map((data, index) => (
                   <div key={index}>
-                    <p>Item: {data.items}</p>
+                    <p>Item: {data.item}</p>
                     <p>Quantity: {data.qty}</p>
                   </div>
                 ))}

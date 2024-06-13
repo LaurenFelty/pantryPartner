@@ -11,6 +11,7 @@ const mongoURI =
     ? 'mongodb://localhost/pantrypartnertest'
     : 'mongodb://localhost/pantrypartnerdev';
 
+// Connect to MongoDB
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
@@ -19,43 +20,48 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Enable CORS
 app.use(
   cors({
     origin: 'http://localhost:3000',
   })
 );
 
-// Serve static files from the public directory
 app.use('/', express.static(path.resolve(__dirname, '../public')));
 
-// Serve the main HTML file for the root path
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
 
-// Endpoint to handle new item creation or updating inventory
+// Define your routes
 app.post('/newItem', inventoryController.changeInventory, (req, res) => {
-  res.status(200).json(res.locals.item);
+  if (!res.locals.items) {
+    return res
+      .status(500)
+      .json({ error: 'Failed to process inventory change' });
+  }
+  return res.status(201).json({ items: res.locals.items });
 });
 
-// handle get request gor inventory
 app.get('/getInventory', inventoryController.getInventory, (req, res) => {
-  res.status(200).json(res.locals.items);
+  if (!res.locals.items) {
+    return res.status(500).json({ error: 'Failed to retrieve inventory' });
+  }
+  return res.status(200).json({ items: res.locals.items });
 });
 
-// 404 handler for undefined routes
+// Handle 404 errors
 app.use('*', (req, res) => {
   res.status(404).send('Not Found');
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send({ error: err.message });
+  console.error(err.stack);
+  res
+    .status(500)
+    .json({ error: 'Internal Server Error', message: err.message });
 });
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
 });
