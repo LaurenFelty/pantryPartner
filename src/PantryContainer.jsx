@@ -61,25 +61,29 @@ const PantryContainer = () => {
 
       {/* Conditionally render the popup */}
       {selectedType && (
-        <div className='popupContainer'>
-          <div className='popup-content'>
-            <span className='close' onClick={handleClose}>
-              Exit
-            </span>
-            <h2>{selectedType}</h2>
-            {itemData && Array.isArray(itemData.items) && (
-              <div>
-                {/* Render fetched data here */}
-                {itemData.items.map((data, index) => (
-                  <div key={index}>
-                    <p>Item: {data.item}</p>
-                    <p>Quantity: {data.qty}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+        <>
+          <div className='overlay' onClick={handleClose}></div>
+          <div className='popupContainer'>
+            <div className='popup-content'>
+              <span className='close' onClick={handleClose}>
+                Exit
+              </span>
+              <h2>{selectedType}</h2>
+              {itemData && Array.isArray(itemData.items) && (
+                <div id='itemsAndQty'>
+                  <div className='grid-header'>Item</div>
+                  <div className='grid-header'>Qty</div>
+                  {itemData.items.map((data, index) => (
+                    <React.Fragment key={index}>
+                      <div className='grid-item'>{data.item}</div>
+                      <div className='grid-qty'>{data.qty}</div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

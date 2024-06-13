@@ -2,14 +2,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: solid;
   width: 15vw;
-  border-radius: 30px;
   background-color: #b79a7b;
-  border-width: 4px;
+  border: 10px double;
   border-radius: 30px;
-  border-style: double;
-  border-width: 10px;
   margin-top: 20px;
   padding: 7px;
 }
@@ -34,8 +30,7 @@
 }
 
 #groceryContainer {
-  margin-left: 0px;
-  margin-right: 0px;
+  margin: 0;
   display: grid;
   grid-template-columns: repeat(1, 1fr); /* 1 column of equal width */
   padding: 5px; /* Adds padding around the container */
@@ -67,39 +62,74 @@
     cursor: pointer;
   }
 }
-.popupContainer {
-  position: fixed; // Use fixed positioning
-  top: 0; // Align to the top of the viewport
-  left: 0; // Align to the left
-  width: 20%; // Cover the entire width
-  height: auto; // Cover the entire height
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgb(255, 255, 255); // Semi-transparent background
-  z-index: 1000; // Ensure it appears above other elements
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  border-radius: 30px;
-  margin-top: 20%;
-  margin-left: 35%;
-  cursor: auto;
 
-  &-content {
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+.popupContainer {
+  position: fixed; /* Use fixed positioning */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for centering */
+  width: 40%; /* Set width */
+  background-color: white;
+  z-index: 1001; /* Ensure it appears above other elements */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 20px;
+
+  .popup-content {
+    position: relative;
     padding: 20px;
 
     .close {
       position: absolute;
+      top: 10px;
+      right: 10px;
       cursor: pointer;
-      color: #888;
-      font-size: 20px; // Increase font size
+      color: #616161;
+      font-size: 20px; /* Increase font size */
+
+      &:hover {
+        font-weight: bold;
+      }
     }
 
     h2 {
       margin-top: 0;
     }
   }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+#itemsAndQty {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.grid-header {
+  font-weight: bold;
+  text-align: center;
+}
+
+.grid-item {
+  background-color: #f0f0f0;
+  padding: 5px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.grid-qty {
+  background-color: #f0f0f0;
+  padding: 5px;
+  border-radius: 5px;
+  text-align: center;
 }
