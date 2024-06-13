@@ -60,7 +60,7 @@ const PantryContainer = () => {
         ))}
       </div>
 
-      {/* Conditionally render the popup */}
+      {/* Conditionally render the popup by looking to see if the selectedType state is truth aka somehting was selected*/}
       {selectedType && (
         <>
           <div className='overlay' onClick={handleClose}></div>
