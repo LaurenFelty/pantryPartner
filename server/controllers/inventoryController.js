@@ -97,4 +97,39 @@ inventoryController.getInventory = async (req, res, next) => {
   }
 };
 
+inventoryController.outOfStock = async (req, res, next) => {
+  try {
+    // Find all itemType documents where there is a qty in the items array that is === 0
+    const itemTypes = await ItemType.find({ 'items.qty': 0 });
+
+    //We need to reduce the items to once array.
+    //Declare a constant outOfStockItems
+    //Use the reduce method to find the specific items in the items array with the qty 0; it takes two paraments: an empty array and the array we are reducing
+    const outOfStockItems = itemTypes.reduce((result, itemType) => {
+      // Find items within each itemType with qty === 0
+      const filteredItems = itemType.items.filter((item) => item.qty === 0);
+
+      // Combine items into one array by itemType
+      if (filteredItems.length > 0) {
+        result.push({
+          itemType: itemType.itemType,
+          items: filteredItems.map((item) => ({
+            item: item.item,
+            qty: item.qty,
+          })),
+        });
+      }
+
+      return result;
+    }, []);
+
+    // Add the outOfStockItems to res.locals to be returned to the front end
+    res.locals.items = outOfStockItems;
+    return next();
+  } catch (error) {
+    console.error('Error finding out of stock items:', error);
+    return next(error);
+  }
+};
+
 module.exports = inventoryController;
