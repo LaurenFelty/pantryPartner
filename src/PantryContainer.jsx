@@ -20,7 +20,8 @@ const PantryContainer = () => {
   const [itemData, setItemData] = useState(null);
 
   const handleClick = async (itemType) => {
-    setSelectedType(itemType.label); // Set selectedType to the label
+    // Set selectedType to the label
+    setSelectedType(itemType.label);
     try {
       const response = await fetch(
         `http://localhost:8080/getInventory?itemType=${itemType.value}`
